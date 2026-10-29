@@ -1,0 +1,713 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Lock Challenge | Class IX DTI</title>
+
+<style>
+:root {
+    --navy: #12213a;
+    --blue: #2463eb;
+    --cyan: #54d6c8;
+    --bg: #f3f6fb;
+    --ink: #182235;
+    --green: #16845b;
+    --red: #c0394b;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #e8f0ff, #f7fbff);
+    color: var(--ink);
+    min-height: 100vh;
+}
+
+header {
+    background: var(--navy);
+    color: white;
+    padding: 22px 18px;
+    text-align: center;
+    border-bottom: 5px solid var(--cyan);
+}
+
+header h1 {
+    margin: 0 0 7px;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+}
+
+header p {
+    margin: 0;
+    color: #d7e3f7;
+}
+
+.wrap {
+    max-width: 980px;
+    margin: 24px auto;
+    padding: 0 16px 30px;
+}
+
+.toprow {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.pill {
+    background: white;
+    border: 1px solid #dce5f2;
+    border-radius: 999px;
+    padding: 9px 14px;
+    font-weight: bold;
+    color: var(--navy);
+}
+
+.progress {
+    height: 10px;
+    background: #dce5f2;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 12px 0 20px;
+}
+
+.bar {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--blue), var(--cyan));
+    transition: width 0.3s;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 1fr 270px;
+    gap: 18px;
+}
+
+.panel {
+    background: white;
+    border: 1px solid #e0e8f3;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 12px 30px #1d355710;
+}
+
+.eyebrow {
+    color: var(--blue);
+    font-weight: bold;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+h2 {
+    margin: 8px 0 12px;
+    font-size: 1.45rem;
+}
+
+.question {
+    font-size: 1.16rem;
+    line-height: 1.5;
+    margin: 18px 0;
+}
+
+.options {
+    display: grid;
+    gap: 10px;
+}
+
+.option {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border: 2px solid #dce5f2;
+    border-radius: 12px;
+    padding: 13px 14px;
+    cursor: pointer;
+    background: white;
+    transition: 0.15s;
+}
+
+.option:hover {
+    border-color: var(--blue);
+    background: #f5f8ff;
+}
+
+.option input {
+    accent-color: var(--blue);
+}
+
+.option.selected {
+    border-color: var(--blue);
+    background: #eff5ff;
+}
+
+button {
+    border: 0;
+    border-radius: 10px;
+    padding: 12px 17px;
+    font-weight: bold;
+    font-size: 0.98rem;
+    cursor: pointer;
+}
+
+.primary {
+    background: var(--blue);
+    color: white;
+}
+
+.primary:hover {
+    background: #164dcc;
+}
+
+.secondary {
+    background: #eaf0fa;
+    color: var(--navy);
+}
+
+button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.feedback {
+    margin-top: 16px;
+    padding: 13px 14px;
+    border-radius: 10px;
+    display: none;
+    line-height: 1.45;
+}
+
+.feedback.good {
+    display: block;
+    background: #e8f8f0;
+    color: #126747;
+    border: 1px solid #b7e7d0;
+}
+
+.feedback.bad {
+    display: block;
+    background: #fff0f0;
+    color: #9b2636;
+    border: 1px solid #f4c2c7;
+}
+
+.stage-list {
+    display: grid;
+    gap: 9px;
+}
+
+.stage {
+    padding: 11px 12px;
+    border-radius: 10px;
+    background: #f3f6fb;
+    color: #65748a;
+    font-weight: bold;
+    font-size: 0.9rem;
+    border: 1px solid #e5ebf4;
+}
+
+.stage.active {
+    background: #eaf1ff;
+    color: #1d4ed8;
+    border-color: #b8ccff;
+}
+
+.stage.done {
+    background: #e8f8f0;
+    color: #126747;
+    border-color: #b7e7d0;
+}
+
+.lock {
+    font-size: 3rem;
+    text-align: center;
+    margin: 8px 0;
+}
+
+.small {
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.startscreen,
+.endscreen {
+    text-align: center;
+    padding: 20px 5px;
+}
+
+.startscreen .lock,
+.endscreen .lock {
+    font-size: 4.5rem;
+}
+
+.hide {
+    display: none !important;
+}
+
+.note {
+    margin-top: 14px;
+    font-size: 0.82rem;
+    color: #64748b;
+}
+
+@media (max-width: 760px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .panel {
+        padding: 19px;
+    }
+
+    .stage-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🔐 Digital Number System</h1>
+    <p>The Digital Lock Challenge · Class IX DTI</p>
+</header>
+
+<div class="wrap">
+
+    <div class="toprow">
+        <div class="pill" id="stagePill">Stage 1 of 12</div>
+        <div class="pill" id="scorePill">Score: 0</div>
+        <div class="pill" id="attemptPill">Attempts: 0</div>
+    </div>
+
+    <div class="progress">
+        <div class="bar" id="bar"></div>
+    </div>
+
+    <div class="layout">
+
+        <main class="panel">
+
+            <div class="startscreen" id="startScreen">
+                <div class="lock">🔒</div>
+                <div class="eyebrow">Mission briefing</div>
+
+                <h2>Can you unlock the digital vault?</h2>
+
+                <p>
+                    Answer questions based on your Chapter 1 notes.
+                    Each correct answer opens the next stage.
+                    If you answer incorrectly, review the learning
+                    materials and try again.
+                </p>
+
+                <p class="small">
+                    Topics include number systems, conversions, ASCII,
+                    image representation, digital audio, storage units
+                    and logic gates.
+                </p>
+
+                <button class="primary" id="startBtn">
+                    Start the challenge →
+                </button>
+            </div>
+
+            <div id="gameScreen" class="hide">
+
+                <div class="eyebrow" id="topicLabel">Topic</div>
+
+                <h2 id="questionTitle">Question</h2>
+
+                <div class="question" id="questionText"></div>
+
+                <form id="answerForm">
+
+                    <div class="options" id="options"></div>
+
+                    <div class="actions">
+                        <button class="primary" type="submit" id="checkBtn">
+                            Check answer
+                        </button>
+
+                        <button class="secondary" type="button"
+                                id="nextBtn" disabled>
+                            Next stage →
+                        </button>
+                    </div>
+
+                </form>
+
+                <div class="feedback" id="feedback"
+                     role="status" aria-live="polite"></div>
+
+                <div class="note">
+                    Tip: You can retry a question until you answer it correctly.
+                </div>
+
+            </div>
+
+            <div class="endscreen hide" id="endScreen">
+
+                <div class="lock">🔓</div>
+                <div class="eyebrow">Mission complete</div>
+
+                <h2>You unlocked the digital vault!</h2>
+
+                <p id="finalMessage"></p>
+
+                <button class="primary" id="restartBtn">
+                    Play again ↻
+                </button>
+
+                <p class="small">
+                    Review your digital notes to practise these concepts again.
+                </p>
+
+            </div>
+
+        </main>
+
+        <aside class="panel">
+            <h3>🔑 Lock stages</h3>
+
+            <div class="stage-list" id="stageList"></div>
+
+            <p class="small" style="margin-top: 15px">
+                A stage is marked complete after a correct answer.
+                Your score increases the first time you solve each question.
+            </p>
+        </aside>
+
+    </div>
+</div>
+
+<script>
+const questions = [
+    {
+        topic: "Number systems",
+        title: "Stage 1 · Binary key",
+        q: "Which two digits are used in the binary number system?",
+        opts: ["0 and 1", "0 to 7", "0 to 9", "0 to 15"],
+        a: 0,
+        why: "Binary is base 2 and uses only the digits 0 and 1."
+    },
+    {
+        topic: "Number systems",
+        title: "Stage 2 · Decimal lock",
+        q: "Why is the decimal number system called base 10?",
+        opts: [
+            "It uses 2 digits",
+            "It uses 8 digits",
+            "It uses 10 digits, from 0 to 9",
+            "It uses 16 digits"
+        ],
+        a: 2,
+        why: "Decimal uses ten digits: 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9."
+    },
+    {
+        topic: "Number conversion",
+        title: "Stage 3 · Binary to decimal",
+        q: "What is the decimal value of binary 1011₂?",
+        opts: ["9", "10", "11", "13"],
+        a: 2,
+        why: "1×8 + 0×4 + 1×2 + 1×1 = 11."
+    },
+    {
+        topic: "Number conversion",
+        title: "Stage 4 · Binary to octal",
+        q: "Using the grouping method, what is 10110₂ in octal?",
+        opts: ["24₈", "26₈", "32₈", "16₈"],
+        a: 1,
+        why: "Group from the right: 010 110. The groups equal 2 and 6, giving 26₈."
+    },
+    {
+        topic: "Number conversion",
+        title: "Stage 5 · Decimal to binary",
+        q: "What is decimal 13 in binary?",
+        opts: ["1011₂", "1101₂", "1110₂", "1001₂"],
+        a: 1,
+        why: "Converting decimal 13 to binary gives 1101₂."
+    },
+    {
+        topic: "ASCII",
+        title: "Stage 6 · Character code",
+        q: "What is the ASCII decimal value of capital A?",
+        opts: ["65", "97", "48", "90"],
+        a: 0,
+        why: "Capital A has ASCII value 65. Lowercase a has value 97."
+    },
+    {
+        topic: "Image representation",
+        title: "Stage 7 · Pixel lock",
+        q: "In the simple black-and-white image model, what does 1 represent?",
+        opts: [
+            "White (off)",
+            "Black (on)",
+            "A sound sample",
+            "One byte"
+        ],
+        a: 1,
+        why: "In the model used here, 1 represents black (on), and 0 represents white (off)."
+    },
+    {
+        topic: "Digital audio",
+        title: "Stage 8 · Sound signal",
+        q: "What can happen if sound is sampled too slowly?",
+        opts: [
+            "Sound quality always improves",
+            "Sound information may be lost",
+            "The sound becomes an image",
+            "The file no longer uses binary data"
+        ],
+        a: 1,
+        why: "Sampling too slowly can lose sound information and reduce the quality of the digital recording."
+    },
+    {
+        topic: "Storage units",
+        title: "Stage 9 · Storage vault",
+        q: "According to the storage-unit convention used in this quiz, how many bytes are in 1 KB?",
+        opts: ["8", "100", "1000", "1024"],
+        a: 3,
+        why: "This quiz uses the convention 1 KB = 1024 bytes."
+    },
+    {
+        topic: "Logic gates",
+        title: "Stage 10 · AND gate",
+        q: "When does an AND gate produce output 1?",
+        opts: [
+            "Whenever either input is 1",
+            "Only when both inputs are 1",
+            "Only when both inputs are 0",
+            "Whenever the inputs are different"
+        ],
+        a: 1,
+        why: "An AND gate outputs 1 only when both inputs are 1."
+    },
+    {
+        topic: "Logic gates",
+        title: "Stage 11 · NOT gate",
+        q: "What is the output of a NOT gate when its input is 0?",
+        opts: ["0", "1", "Both 0 and 1", "It has no output"],
+        a: 1,
+        why: "A NOT gate reverses its input: 0 becomes 1 and 1 becomes 0."
+    },
+    {
+        topic: "Truth tables",
+        title: "Stage 12 · Final lock",
+        q: "How many possible input combinations are there for a truth table with 3 binary inputs?",
+        opts: ["3", "6", "8", "9"],
+        a: 2,
+        why: "The number of combinations is 2ⁿ. For 3 inputs, 2³ = 8."
+    }
+];
+
+const stages = [
+    "Binary basics",
+    "Decimal system",
+    "Binary to decimal",
+    "Binary to octal",
+    "Decimal to binary",
+    "ASCII",
+    "Pixels",
+    "Digital audio",
+    "Storage units",
+    "AND gate",
+    "NOT gate",
+    "Final lock"
+];
+
+let current = 0;
+let score = 0;
+let attempts = 0;
+let completed = new Set();
+let answered = false;
+
+const $ = id => document.getElementById(id);
+
+function renderStages() {
+    $("stageList").innerHTML = stages.map((stage, i) => {
+        let status = "";
+
+        if (completed.has(i)) {
+            status = "done";
+        } else if (i === current) {
+            status = "active";
+        }
+
+        let symbol = completed.has(i)
+            ? "✓"
+            : i === current ? "🔓" : "🔒";
+
+        return `<div class="stage ${status}">
+            ${symbol} ${i + 1}. ${stage}
+        </div>`;
+    }).join("");
+}
+
+function updateTop() {
+    $("stagePill").textContent =
+        `Stage ${Math.min(current + 1, questions.length)} of ${questions.length}`;
+
+    $("scorePill").textContent = `Score: ${score}`;
+    $("attemptPill").textContent = `Attempts: ${attempts}`;
+
+    $("bar").style.width =
+        `${completed.size / questions.length * 100}%`;
+}
+
+function loadQuestion() {
+    const q = questions[current];
+
+    answered = false;
+
+    $("topicLabel").textContent = q.topic;
+    $("questionTitle").textContent = q.title;
+    $("questionText").textContent = q.q;
+
+    $("options").innerHTML = q.opts.map((option, i) => `
+        <label class="option">
+            <input type="radio" name="answer" value="${i}">
+            <span>${String.fromCharCode(65 + i)}. ${option}</span>
+        </label>
+    `).join("");
+
+    $("feedback").className = "feedback";
+    $("feedback").textContent = "";
+
+    $("checkBtn").disabled = false;
+    $("nextBtn").disabled = true;
+
+    $("nextBtn").textContent =
+        current === questions.length - 1
+            ? "Unlock vault →"
+            : "Next stage →";
+
+    document.querySelectorAll(".option").forEach(option => {
+        option.addEventListener("click", () => {
+            document.querySelectorAll(".option").forEach(item => {
+                item.classList.remove("selected");
+            });
+
+            option.classList.add("selected");
+        });
+    });
+
+    renderStages();
+    updateTop();
+}
+
+$("startBtn").addEventListener("click", () => {
+    $("startScreen").classList.add("hide");
+    $("gameScreen").classList.remove("hide");
+
+    loadQuestion();
+});
+
+$("answerForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    if (answered) return;
+
+    const picked = document.querySelector(
+        'input[name="answer"]:checked'
+    );
+
+    const feedback = $("feedback");
+
+    if (!picked) {
+        feedback.className = "feedback bad";
+        feedback.textContent = "Please select an answer first.";
+        return;
+    }
+
+    attempts++;
+
+    const q = questions[current];
+
+    if (Number(picked.value) === q.a) {
+        answered = true;
+
+        if (!completed.has(current)) {
+            completed.add(current);
+            score += 10;
+        }
+
+        feedback.className = "feedback good";
+        feedback.textContent = "Correct! 🔓 " + q.why;
+
+        $("checkBtn").disabled = true;
+        $("nextBtn").disabled = false;
+
+        document.querySelectorAll(
+            'input[name="answer"]'
+        ).forEach(input => {
+            input.disabled = true;
+        });
+
+    } else {
+        feedback.className = "feedback bad";
+        feedback.textContent =
+            "Incorrect answer. Please review your Chapter 1 textbook notes " +
+            "or watch the learning videos again, then try this question once more.";
+    }
+
+    updateTop();
+    renderStages();
+});
+
+$("nextBtn").addEventListener("click", () => {
+    if (!answered) return;
+
+    if (current < questions.length - 1) {
+        current++;
+        loadQuestion();
+    } else {
+        $("gameScreen").classList.add("hide");
+        $("endScreen").classList.remove("hide");
+
+        $("finalMessage").textContent =
+            `You completed all ${questions.length} stages and earned ` +
+            `${score} points in ${attempts} attempts. Great work!`;
+
+        updateTop();
+        renderStages();
+    }
+});
+
+$("restartBtn").addEventListener("click", () => {
+    current = 0;
+    score = 0;
+    attempts = 0;
+    completed = new Set();
+
+    $("endScreen").classList.add("hide");
+    $("startScreen").classList.remove("hide");
+
+    updateTop();
+    renderStages();
+});
+
+renderStages();
+updateTop();
+</script>
+
+</body>
+</html>
